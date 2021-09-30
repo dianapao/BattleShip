@@ -106,7 +106,7 @@ public class GUICliente extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jPanelShips.setBackground(new java.awt.Color(102, 102, 102));
+        jPanelShips.setBackground(new java.awt.Color(0, 102, 153));
         jPanelShips.setForeground(new java.awt.Color(102, 255, 255));
 
         javax.swing.GroupLayout jPanelShipsLayout = new javax.swing.GroupLayout(jPanelShips);

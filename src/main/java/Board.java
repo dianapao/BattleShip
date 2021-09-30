@@ -1,5 +1,3 @@
-
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import java.awt.Color;
@@ -8,12 +6,15 @@ import java.awt.event.MouseListener;
 
 public class Board implements  MouseListener{
     private JButton[][] jArrayButtons; 
-    private Barco[] barcos = new Barco[7];
     private int rows = 10;
     private int columns = 10;
+    
+    private Barco[] barcos = new Barco[7];
+    
     private int[][] tablero = new int[10][10];
     private int barcosDisponibles;
     private int orientacion=0;
+    
     public Board() {
         rows = 10;
         columns = 10;
@@ -24,15 +25,17 @@ public class Board implements  MouseListener{
         barcos[4]=new Barco(2);
         barcos[5]=new Barco(2);
         barcos[6]=new Barco(5);
+        
         this.barcosDisponibles = 0;
         this.orientacion=0;
-        for(int i =0;i<10;i++){
-            for(int j=0;j<10;j++){
+        
+        for(int i=0; i<10; i++){
+            for(int j=0; j<10; j++){
                 tablero[i][j]=-1;
             }
         }
         
-    }
+    }   //Fin constructor
     
     public void setMatrix(JPanel matrix){
         jArrayButtons = new JButton[rows][columns];
@@ -41,9 +44,8 @@ public class Board implements  MouseListener{
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
                 jArrayButtons[i][j] = new JButton();
-                //CUADRO[i][j].setBackground(Color.green);
                 jArrayButtons[i][j].setBounds(j*wButton, i*hButton, wButton, hButton);
-                jArrayButtons[i][j].setBackground(Color.CYAN);
+                jArrayButtons[i][j].setBackground(Color.BLACK);
               
                 jArrayButtons[i][j].setName(i+":"+j);
                 matrix.add(jArrayButtons[i][j]);
@@ -71,6 +73,7 @@ public class Board implements  MouseListener{
     public void mouseClicked(MouseEvent e) {
         
         if(e.getButton() == MouseEvent.BUTTON3){
+            System.out.println("Boton 3");
             this.mouseExited(e);
             this.orientacion = (this.orientacion+1)%4;
             this.mouseEntered(e);
@@ -121,14 +124,30 @@ public class Board implements  MouseListener{
         int i=y;
         int j=x;
         int espacios = barcos[barcosDisponibles].getTamño();
+        
+        Color[] colors;
+        colors = new Color[7];
+        colors[0] = Color.ORANGE;
+        colors[1] = Color.GREEN;
+        colors[2] = Color.CYAN;
+        colors[3] = Color.RED;
+        colors[4] = Color.YELLOW;
+        colors[5] = Color.PINK;
+        colors[6] = Color.MAGENTA;
+        
         while(espacios>0){
-            jArrayButtons[i][j].setBackground(Color.DARK_GRAY);
+            //jArrayButtons[i][j].setBackground(Color.DARK_GRAY);
+            System.out.println("Barcos disp: " + barcosDisponibles);
+            jArrayButtons[i][j].setBackground(colors[barcosDisponibles]);
             tablero[i][j]=barcosDisponibles;
             
             i+=y1;
             j+=x1;
             
             espacios--;
+            System.out.println("Espacios: " + espacios);
+            
+                
         }
         barcosDisponibles++;
     }
@@ -169,12 +188,12 @@ public class Board implements  MouseListener{
     }
     @Override
     public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -215,7 +234,7 @@ public class Board implements  MouseListener{
                 break;
             }
             if(comprobarPintar(j,i)){
-                jArrayButtons[i][j].setBackground(Color.DARK_GRAY);
+                jArrayButtons[i][j].setBackground(Color.WHITE);
             }
             
             i+=y1;
@@ -263,7 +282,7 @@ public class Board implements  MouseListener{
                 break;
             }
             if(comprobarPintar(j,i)){
-                jArrayButtons[i][j].setBackground(Color.CYAN);
+                jArrayButtons[i][j].setBackground(Color.BLACK);
             }
             
             i+=y1;
