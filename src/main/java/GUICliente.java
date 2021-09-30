@@ -127,6 +127,11 @@ public class GUICliente extends javax.swing.JFrame {
         jLabel2.setText("Mi tablero");
 
         jButtonPutShips.setText("Poner barquitos");
+        jButtonPutShips.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPutShipsActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Trebuchet MS", 0, 12)); // NOI18N
         jLabel3.setText("Coordenadas oponente");
@@ -185,6 +190,9 @@ public class GUICliente extends javax.swing.JFrame {
                         .addGap(272, 272, 272)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(127, 127, 127)
+                        .addComponent(jButtonPutShips))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanelCoordinatesYship, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
@@ -196,10 +204,7 @@ public class GUICliente extends javax.swing.JFrame {
                         .addGap(2, 2, 2)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanelCoordinatesXopponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanelOpponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(127, 127, 127)
-                        .addComponent(jButtonPutShips)))
+                            .addComponent(jPanelOpponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(152, 152, 152)
@@ -234,6 +239,12 @@ public class GUICliente extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonPutShipsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPutShipsActionPerformed
+       this.boardShips.ColocarBarcos();
+       JButton boton = (JButton)evt.getSource();
+       boton.setEnabled(false);
+    }//GEN-LAST:event_jButtonPutShipsActionPerformed
 
     /**
      * @param args the command line arguments
