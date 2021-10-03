@@ -35,6 +35,7 @@ public class GUICliente extends javax.swing.JFrame {
      */
     public GUICliente() {
         cliente.createConecction();
+        cliente.createStreams();
         initComponents();
         setBoards();
     }
@@ -213,6 +214,7 @@ public class GUICliente extends javax.swing.JFrame {
         });
 
         jButtonSendCoordinates.setText("Adivinar coordenadas");
+        jButtonSendCoordinates.setEnabled(false);
         jButtonSendCoordinates.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendCoordinatesActionPerformed(evt);
@@ -292,6 +294,10 @@ public class GUICliente extends javax.swing.JFrame {
        this.boardShips.ColocarBarcos();
        JButton boton = (JButton)evt.getSource();
        boton.setEnabled(false);
+       JFrame f=new JFrame();
+       String nombre = JOptionPane.showInputDialog(f,"Text");
+       cliente.Negociar(nombre);
+       this.jButtonSendCoordinates.setEnabled(true);
     }//GEN-LAST:event_jButtonPutShipsActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed

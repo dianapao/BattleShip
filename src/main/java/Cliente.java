@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class Cliente {
     private static int[][] board = null;
     private int pto = 1255;
-    private int max;
+    private int max = 65535;
     private int x,y;
     private DatagramPacket peco;
     
@@ -29,7 +29,39 @@ public class Cliente {
     public Cliente(){
         this.max = 65535;
     }
-    
+    public void sendPacket(Object o)throws IOException{
+        oos.flush();
+        oos.writeObject(o);
+        
+        byte[]tmp = baos.toByteArray();
+        DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,pto);
+        cl.send(p);   
+    }
+    public Object recivePacket() throws Exception{
+        DatagramPacket p = new DatagramPacket(new byte[max],max);
+        cl.receive(p);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
+        return ois.readObject();
+    }
+    public void Negociar(String nombre){
+        try{
+            
+            sendPacket(nombre);
+            Object aux = recivePacket();
+            while(true){
+                if(aux instanceof String){
+                    if(((String)aux).equals("OK")){
+                        System.out.println("Negociacion exitosa");
+                        return;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        
+        
+    }
     public void createConecction(){
         System.out.println("function createConecction");
         try{
@@ -42,9 +74,14 @@ public class Cliente {
         }
     }
     
-    public void createStreams() throws IOException{
-        baos = new ByteArrayOutputStream();
-        oos = new ObjectOutputStream(baos);
+    public void createStreams(){
+        try{
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        
     }
     
     public void closeStreams() throws IOException{
@@ -53,7 +90,7 @@ public class Cliente {
     }
     
     public void sendServerAdivinaCoordenadas() throws IOException{
-        createStreams();
+        
         
         Coordenadas cord = new Coordenadas(getCoordenadaX(), getCoordenadaY());
         System.out.println("Cliente X: " + getCoordenadaX());
@@ -64,7 +101,7 @@ public class Cliente {
         DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,pto);
         cl.send(p);
         
-        closeStreams();
+        //closeStreams();
     }
     
     public void setAdivinaCoordenadas(int x, int y){
