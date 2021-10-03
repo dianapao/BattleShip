@@ -1,9 +1,16 @@
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /*
@@ -21,11 +28,13 @@ public class GUICliente extends javax.swing.JFrame {
     Board boardShips = new Board();
     Board boardOponent = new Board(); 
     
+    Cliente cliente = new Cliente();
     
     /**
      * Creates new form GUICliente
      */
     public GUICliente() {
+        cliente.createConecction();
         initComponents();
         setBoards();
     }
@@ -67,8 +76,22 @@ public class GUICliente extends javax.swing.JFrame {
                 coordX.updateUI();
                 break;
             }
+        }        
+    }
+    
+    public void adivinarCoordenadas() throws ClassNotFoundException{
+        JFrame f=new JFrame();  
+        int x = Integer.parseInt( JOptionPane.showInputDialog(f,"Text") );
+        int y = Integer.parseInt( JOptionPane.showInputDialog(f,"Text") );
+        System.out.println("X:" + x);
+        System.out.println("Y:" + y);
+        cliente.setAdivinaCoordenadas(x, y);
+        try {
+            cliente.sendServerAdivinaCoordenadas();
+            cliente.getRespuestaServidor();
+        } catch (IOException ex) {
+            Logger.getLogger(GUICliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
 
     /**
@@ -90,6 +113,8 @@ public class GUICliente extends javax.swing.JFrame {
         jPanelCoordinatesXship = new javax.swing.JPanel();
         jPanelCoordinatesYship = new javax.swing.JPanel();
         jPanelCoordinatesYopponent = new javax.swing.JPanel();
+        jButtonStart = new javax.swing.JButton();
+        jButtonSendCoordinates = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -180,10 +205,30 @@ public class GUICliente extends javax.swing.JFrame {
             .addGap(0, 317, Short.MAX_VALUE)
         );
 
+        jButtonStart.setText("Iniciar juego");
+        jButtonStart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonStartActionPerformed(evt);
+            }
+        });
+
+        jButtonSendCoordinates.setText("Adivinar coordenadas");
+        jButtonSendCoordinates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSendCoordinatesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(152, 152, 152)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(156, 156, 156))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -204,14 +249,13 @@ public class GUICliente extends javax.swing.JFrame {
                         .addGap(2, 2, 2)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanelCoordinatesXopponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanelOpponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jPanelOpponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(jButtonStart)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonSendCoordinates)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
-                .addComponent(jLabel3)
-                .addGap(156, 156, 156))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,7 +278,11 @@ public class GUICliente extends javax.swing.JFrame {
                             .addComponent(jPanelCoordinatesYopponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanelOpponent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jPanelCoordinatesXopponent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(104, 104, 104))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonStart)
+                    .addComponent(jButtonSendCoordinates))
+                .addGap(63, 63, 63))
         );
 
         pack();
@@ -245,6 +293,18 @@ public class GUICliente extends javax.swing.JFrame {
        JButton boton = (JButton)evt.getSource();
        boton.setEnabled(false);
     }//GEN-LAST:event_jButtonPutShipsActionPerformed
+
+    private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
+        
+    }//GEN-LAST:event_jButtonStartActionPerformed
+
+    private void jButtonSendCoordinatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendCoordinatesActionPerformed
+        try {
+            adivinarCoordenadas();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUICliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButtonSendCoordinatesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -283,6 +343,8 @@ public class GUICliente extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonPutShips;
+    private javax.swing.JButton jButtonSendCoordinates;
+    private javax.swing.JButton jButtonStart;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

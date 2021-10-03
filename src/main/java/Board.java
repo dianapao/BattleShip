@@ -54,7 +54,11 @@ public class Board implements  MouseListener{
         }
         System.out.println("Implementando tablero");
     }
-
+    
+    public int[][] getBoardWithShips(){
+        return tablero;
+    }
+    
     public void ColocarBarcos(){
         for(int i=0; i<rows; i++){
             for(int j=0; j<columns; j++){
@@ -63,7 +67,14 @@ public class Board implements  MouseListener{
         }   
     }
     
-    public boolean comprobarPintar(int x,int y){
+    public boolean comprobarColocado(){
+        if(barcosDisponibles > 6)
+            return true;
+        else
+            return false;
+    }
+    
+    private boolean comprobarPintar(int x,int y){
         if(tablero[y][x] == -1){
             return true;
         }
@@ -101,7 +112,7 @@ public class Board implements  MouseListener{
             
     }
     
-    public void colocar(int x, int y){
+    private void colocar(int x, int y){
         int x1=0,y1=0;
         switch(orientacion){
             case 0:
@@ -151,7 +162,7 @@ public class Board implements  MouseListener{
         }
         barcosDisponibles++;
     }
-    public boolean comprobar(int x, int y){
+    private boolean comprobar(int x, int y){
         
         int x1=0,y1=0;
         switch(orientacion){
