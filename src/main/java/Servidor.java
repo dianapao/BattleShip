@@ -21,6 +21,7 @@ public class Servidor {
     private static Barco[] barcos = new Barco[7];
     private static int barcosDisponibles;
     private static int orientacion=0;
+    
     //private static InetAddress dir;
     
     /*public static void createConnection(){
@@ -34,19 +35,26 @@ public class Servidor {
     }*/
     
     public static void sendCoordenadas(DatagramPacket dpRecivido)throws IOException{
-        int x_serv = 7;
-        int y_serv = 8;
+        int x_serv = rand(0,9);
+        int y_serv = rand(0,9);
         Coordenadas cord = new Coordenadas(x_serv, y_serv);
         sendPacket(cord); 
+        System.out.println("Enviando coordenadas al azar al cliente ");
     }
     
     public static void sendPacket(Object o)throws IOException{
+        baos = new ByteArrayOutputStream();
+        oos = new ObjectOutputStream(baos);
+        
         oos.flush();
         oos.writeObject(o);
         
         byte[]tmp = baos.toByteArray();
         DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,ptoCl);
         cl.send(p);   
+        
+        baos.close();
+        oos.close();
     }
     public static void Inicializar(){
         barcos[0]=new Barco(4);
@@ -118,15 +126,11 @@ public class Servidor {
         
         
         
-        while(espacios>0){
-            
-            tablero[i][j] = id;
-            
+        while(espacios>0){            
+            tablero[i][j] = id;            
             i+=y1;
-            j+=x1;
-            
+            j+=x1;            
             espacios--;
-            System.out.println("Espacios: " + espacios);        
         }
     }
     private static boolean comprobar(int x, int y,Barco b){
@@ -164,41 +168,56 @@ public class Servidor {
         }
         return true;
     }
+    
+
     public static void main(String[] args) {
         try{
             cl = new DatagramSocket(pto);
             cl.setReuseAddress(true);
             System.out.println("Servidor de datagrama iniciado en el puerto "+cl.getLocalPort());
-            baos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(baos);
+            //baos = new ByteArrayOutputStream();
+            //oos = new ObjectOutputStream(baos);
             while(true){
                 DatagramPacket p = new DatagramPacket(new byte[max],max);
                 cl.receive(p);
-                System.out.println("Paquete recivido");
+                System.out.println("Paquete recibido");
+                
                 ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
                 Object auxiliar = ois.readObject();
-                if(auxiliar instanceof String){
+                //if(auxiliar instanceof String)
+                
+                if(auxiliar instanceof Coordenadas){
+                    //Coordenadas coord = (Coordenadas)ois.readObject();
+                    Coordenadas coord = (Coordenadas)auxiliar;
+                    int x = coord.getX();
+                    int y = coord.getY();
+                    System.out.println("Coordenadas recibidas de cliente: "+p.getAddress()+":"+p.getPort());
+                    System.out.println("in serv from cl X:" + x);
+                    System.out.println("in serv from cl y:" + y);
+                    sendCoordenadas(p);
+                    
+                }else if(auxiliar instanceof String){
                     nombreJugador = (String)auxiliar;
                     auxiliar = null;
                     cl.connect(p.getSocketAddress());
                     ptoCl = p.getPort();
                     dir = p.getAddress();
                     System.out.println("Nombre establecido: "+ nombreJugador);
-                }else{
-                    continue;
-                }
-                sendPacket("OK");
-                System.out.println("Confirmacion enviada");
-                Inicializar();
-                for(int i = 0;i<tablero.length;i++){
-                    for(int j=0;j<tablero.length;j++){
-                        if(tablero[i][j]>=0){
-                            System.out.print("+");
+                    
+                    sendPacket("OK");
+                    System.out.println("Confirmacion enviada");
+                    Inicializar();
+                    for(int i = 0;i<tablero.length;i++){
+                        for(int j=0;j<tablero.length;j++){
+                            if(tablero[i][j]>=0){
+                                System.out.print("+");
+                            }
+                            System.out.print(tablero[i][j]+" ");
                         }
-                        System.out.print(tablero[i][j]+" ");
+                        System.out.println();
                     }
-                    System.out.println();
                 }
+                
                 /*cl.receive(p);
                 Coordenadas coord = (Coordenadas)ois.readObject();
                 int x = coord.getX();

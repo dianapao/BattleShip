@@ -82,14 +82,12 @@ public class GUICliente extends javax.swing.JFrame {
     
     public void adivinarCoordenadas() throws ClassNotFoundException{
         JFrame f=new JFrame();  
-        int x = Integer.parseInt( JOptionPane.showInputDialog(f,"Text") );
-        int y = Integer.parseInt( JOptionPane.showInputDialog(f,"Text") );
-        System.out.println("X:" + x);
-        System.out.println("Y:" + y);
+        int x = Integer.parseInt( JOptionPane.showInputDialog(f,"Coordenada X") );
+        int y = Integer.parseInt( JOptionPane.showInputDialog(f,"Coordenada Y") );
         cliente.setAdivinaCoordenadas(x, y);
         try {
             cliente.sendServerAdivinaCoordenadas();
-            cliente.getRespuestaServidor();
+            //cliente.getRespuestaServidor();
         } catch (IOException ex) {
             Logger.getLogger(GUICliente.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -295,7 +293,7 @@ public class GUICliente extends javax.swing.JFrame {
        JButton boton = (JButton)evt.getSource();
        boton.setEnabled(false);
        JFrame f=new JFrame();
-       String nombre = JOptionPane.showInputDialog(f,"Text");
+       String nombre = JOptionPane.showInputDialog(f,"Nombre de jugador");
        cliente.Negociar(nombre);
        this.jButtonSendCoordinates.setEnabled(true);
     }//GEN-LAST:event_jButtonPutShipsActionPerformed

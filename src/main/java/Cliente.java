@@ -29,39 +29,7 @@ public class Cliente {
     public Cliente(){
         this.max = 65535;
     }
-    public void sendPacket(Object o)throws IOException{
-        oos.flush();
-        oos.writeObject(o);
-        
-        byte[]tmp = baos.toByteArray();
-        DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,pto);
-        cl.send(p);   
-    }
-    public Object recivePacket() throws Exception{
-        DatagramPacket p = new DatagramPacket(new byte[max],max);
-        cl.receive(p);
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
-        return ois.readObject();
-    }
-    public void Negociar(String nombre){
-        try{
-            
-            sendPacket(nombre);
-            Object aux = recivePacket();
-            while(true){
-                if(aux instanceof String){
-                    if(((String)aux).equals("OK")){
-                        System.out.println("Negociacion exitosa");
-                        return;
-                    }
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        
-        
-    }
+    
     public void createConecction(){
         System.out.println("function createConecction");
         try{
@@ -81,7 +49,6 @@ public class Cliente {
         }catch (Exception e){
             e.printStackTrace();
         }
-        
     }
     
     public void closeStreams() throws IOException{
@@ -89,9 +56,55 @@ public class Cliente {
         baos.close();
     }
     
-    public void sendServerAdivinaCoordenadas() throws IOException{
+    public void sendPacket(Object o)throws IOException{
+        createStreams();
+        oos.flush();
+        oos.writeObject(o);
+        
+        byte[]tmp = baos.toByteArray();
+        DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,pto);
+        cl.send(p);   
+    }
+    
+    public Object recivePacket() throws Exception{
+        DatagramPacket p = new DatagramPacket(new byte[max],max);
+        cl.receive(p);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
+        return ois.readObject();
+    }
+    
+    public void Negociar(String nombre){
+        try{
+            sendPacket(nombre);
+            Object aux = recivePacket();
+            while(true){
+                if(aux instanceof String){
+                    if(((String)aux).equals("OK")){
+                        System.out.println("Negociacion exitosa");
+                        closeStreams();
+                        return;
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         
         
+    }
+    
+    public void sendServerAdivinaCoordenadas() throws IOException, ClassNotFoundException{
+        
+        /*try{
+            Coordenadas cord = new Coordenadas(getCoordenadaX(), getCoordenadaY());
+            System.out.println("in Cliente X: " + getCoordenadaX());
+            System.out.println("in Cliente Y: " + getCoordenadaY());
+            sendPacket(cord);
+            //Object aux = recivePacket();
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+        createStreams();
         Coordenadas cord = new Coordenadas(getCoordenadaX(), getCoordenadaY());
         System.out.println("Cliente X: " + getCoordenadaX());
         System.out.println("Cliente Y: " + getCoordenadaY());
@@ -99,7 +112,10 @@ public class Cliente {
         oos.flush();
         byte[]tmp = baos.toByteArray();
         DatagramPacket p = new DatagramPacket(tmp,tmp.length,dir,pto);
-        cl.send(p);
+        cl.send(p);        
+        closeStreams();
+        
+        getRespuestaServidor();
         
         //closeStreams();
     }
