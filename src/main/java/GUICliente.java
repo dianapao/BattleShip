@@ -303,7 +303,12 @@ public class GUICliente extends javax.swing.JFrame {
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
             
         try{
-            Coordenadas inicio = new Coordenadas(boardShips.tablero);
+            List<Coordenadas> listCoo= new ArrayList<>(); 
+            listCoo = boardShips.getlistCoordClient();
+            
+            Coordenadas inicio = new Coordenadas(boardShips.tablero, boardShips.getlistCoordClient());
+            List<Coordenadas> listCoo2= new ArrayList<>(); 
+            
             cliente.sendPacket(inicio);
             jButtonPutShips.setEnabled(false);
             ((JButton)(evt.getSource())).setEnabled(false);

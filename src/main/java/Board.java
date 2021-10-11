@@ -3,6 +3,8 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board implements  MouseListener{
     private JButton[][] jArrayButtons; 
@@ -12,6 +14,7 @@ public class Board implements  MouseListener{
     private Barco[] barcos = new Barco[7];
     
     public int[][] tablero = new int[10][10];
+    private static List<Coordenadas> listCoordenadas = new ArrayList<>(); 
     
     private int barcosDisponibles;
     private int orientacion=0;
@@ -41,11 +44,11 @@ public class Board implements  MouseListener{
     
     public boolean comprobarTiro(int x,int y){
         if(tablero[y][x]>-1){
-            jArrayButtons[y][x].setBackground(Color.RED);
+            jArrayButtons[y][x].setBackground(Color.BLUE);
             tablero[y][x] = -2;
             return true;
-        }else if(tablero[y][x]>-1){
-            jArrayButtons[y][x].setBackground(Color.blue);
+        }else if(tablero[y][x] == -1){
+            jArrayButtons[y][x].setBackground(Color.RED);
             return false;
         }
         return false;
@@ -81,6 +84,10 @@ public class Board implements  MouseListener{
     
     public int[][] getBoardWithShips(){
         return tablero;
+    }
+    
+    public List getlistCoordClient(){
+        return listCoordenadas;
     }
     
     public void ColocarBarcos(){
@@ -170,11 +177,15 @@ public class Board implements  MouseListener{
         colors[5] = Color.PINK;
         colors[6] = Color.MAGENTA;
         
+        Coordenadas coordClient;
         while(espacios>0){
             //jArrayButtons[i][j].setBackground(Color.DARK_GRAY);
             System.out.println("Barcos disp: " + barcosDisponibles);
             jArrayButtons[i][j].setBackground(colors[barcosDisponibles]);
             tablero[i][j]=barcosDisponibles;
+            
+            coordClient = new Coordenadas(i,j);
+            listCoordenadas.add(coordClient);
             
             i+=y1;
             j+=x1;

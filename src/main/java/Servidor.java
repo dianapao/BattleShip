@@ -7,6 +7,8 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Servidor {
     private static ByteArrayOutputStream baos;
@@ -23,7 +25,9 @@ public class Servidor {
     private static int barcosDisponibles;
     private static int orientacion=0;
     private static boolean turno;
-    
+    private static List<Coordenadas> listCoordServer = new ArrayList<>();   
+    private static List<Coordenadas> listCoordClient = new ArrayList<>();  
+    private static List<Coordenadas> listTirosServer = new ArrayList<>();
     //private static InetAddress dir;
     
     /*public static void createConnection(){
@@ -128,8 +132,11 @@ public class Servidor {
         int espacios =b.getTamño();
         
         
-        
-        while(espacios>0){            
+        Coordenadas coordServer;
+        while(espacios>0){      
+            coordServer = new Coordenadas(i,j);
+            listCoordServer.add(coordServer);           //-----
+            
             tablero[i][j] = id;            
             i+=y1;
             j+=x1;            
@@ -180,8 +187,16 @@ public class Servidor {
     
     public static boolean comprobarTiro(int x,int y){
         if(tableroContrincante[y][x]>-1){
-            
             tableroContrincante[y][x] = -2;
+            
+            Coordenadas coordToDelete = new Coordenadas(y,x);
+            for(Coordenadas current: listCoordClient){
+                if((current.getX() == coordToDelete.getX()) && (current.getY() == coordToDelete.getY()) ){
+                    System.out.println("deleted in cliente: " + current.getX() + "," + current.getY());
+                    listCoordClient.remove(current);   
+                    break;
+                }                
+            }
             return true;
         }else if(tableroContrincante[y][x]>-1){
             
@@ -193,12 +208,40 @@ public class Servidor {
         if(tablero[y][x]>-1){
             
             tablero[y][x] = -2;
+            
+            Coordenadas coordToDelete = new Coordenadas(y,x);
+            for(Coordenadas current: listCoordServer){
+                if((current.getX() == coordToDelete.getX()) && (current.getY() == coordToDelete.getY()) ){
+                    //System.out.println("deleted: " + current.getX() + "," + current.getY());
+                    listCoordServer.remove(current);   
+                    break;
+                }                
+            }
+            /*System.out.println("COORDENADAS RESTANTES");
+                    for(Coordenadas current: listCoordServer){
+                        System.out.println(current.getX() + "," + current.getY());
+                    }*/
+            
             return true;
         }else if(tablero[y][x]>-1){
             
             return false;
         }
         return false;
+    }
+    
+    public static boolean endGame(){
+        if(listCoordServer.isEmpty())
+            return true;
+        else
+            return false;
+    }
+    
+    public static boolean endGameClient(){
+        if(listCoordClient.isEmpty())
+            return true;
+        else
+            return false;
     }
 
     public static void main(String[] args) {
@@ -222,6 +265,7 @@ public class Servidor {
                     Coordenadas coord = (Coordenadas)auxiliar;
                     if(coord.isStart){
                         tableroContrincante = coord.tablero;
+                        listCoordClient = coord.getListCoordShips();
                         coord = new Coordenadas(tablero);
                         
                         if(rand(0,1) == 0){
@@ -239,35 +283,57 @@ public class Servidor {
                             for(int i = 0;i<3;i++){
                                 Coordenadas tiro = (Coordenadas)recivePacket();
                                 if(!comprobarTiroEnemigo(tiro.x, tiro.y)){
-                                    System.out.println("Suerte tiro fallido");
+                                    System.out.println("Suerte el cliente fallo :D");
                                     break;
                                 }
-                                System.out.println("Le dieron a una nave");
+                                System.out.println("el cliente le dio a una nave :cc");
                             }
-                            /*---------------------------*/
-                            /*---------------------------*/
-                            /*Comprobar si el juego acabo*/
-                            /*---------------------------*/
-                            /*---------------------------*/
+                            
+                            if(endGame()){
+                                System.out.println("!!!!!!!!!!!EL SERVIDOR HA PERDIDO!!!!!!!!!");
+                                System.out.println("!!!!!!!!!!!EL CLIENTE HA GANADOOO :D !!!!!");
+                            }
+                            
                             turno = false;
                         }else{
                             for(int i = 0;i<3;i++){
-                                  
-                                int x = rand(0,9);
+                                Coordenadas aux;
+                                int x, y;
+                                boolean isOldCoordinate = true;
+                                do{
+                                    isOldCoordinate = true;
+                                    x = rand(0,9);
+                                    y = rand(0,9);
+                                    aux = new Coordenadas(x,y);
+                                    System.out.println("Nuevo tiro serv: " + x + "," + y);
+                                    
+                                    for(Coordenadas current: listTirosServer){
+                                        if( (current.getX() == x) && (current.getY() == y) ){
+                                            isOldCoordinate = false;
+                                            //System.out.println("Ya ha habia sido adivinada: ");                                            
+                                            break;
+                                        }
+                                    }
+                                }while(!isOldCoordinate);  
+                                
+                                listTirosServer.add(aux);
+                                
+                                /*int x = rand(0,9);
                                 int y = rand(0,9);
-                                Coordenadas aux = new Coordenadas(x,y);
+                                Coordenadas aux = new Coordenadas(x,y);*/
                                 sendPacket(aux);
                                 if(!comprobarTiro(x, y)){
-                                    System.out.println("Fallaste el tiro");
+                                    System.out.println("Fallaste el tiro :c");
                                     break;
                                 }
-                                System.out.println("Tiro acertado");
+                                System.out.println("Tiro acertado :D");
                             }
-                            /*---------------------------*/
-                            /*---------------------------*/
-                            /*Comprobar si el juego acabo*/
-                            /*---------------------------*/
-                            /*---------------------------*/
+                            
+                            if(endGameClient()){
+                                System.out.println("!!!!!!!!!!EL CLIENTE HA PEDIDO!!!!!!!!!!");
+                                System.out.println("!!!!!!!!!!EL SERVIDOR HA GANADO :DD !!!!");
+                            }
+                            
                             turno = true;
                         }
                     }
@@ -300,6 +366,10 @@ public class Servidor {
                             System.out.print(tablero[i][j]+" ");
                         }
                         System.out.println();
+                    }
+                    System.out.println("Coordenadas utilizadas");
+                    for(Coordenadas current: listCoordServer){
+                        System.out.println(current.getX() + "," + current.getY());
                     }
                     
                 }

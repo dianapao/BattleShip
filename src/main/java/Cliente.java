@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -100,8 +102,15 @@ public class Cliente {
         this.turno = turnoi;
         interfaz.boardOponent.tablero=tablero;
         
+        List<Coordenadas> listCoordClient = new ArrayList<>(); 
+        listCoordClient = interfaz.boardShips.getlistCoordClient();
+        
         while(true){
             if(turno){
+                /*System.out.println("Coordenadas utilizadas en cl");
+                    for(Coordenadas current: listCoordClient){
+                        System.out.println(current.getX() + "," + current.getY());
+                    }*/
                 for(int i = 0;i<3;i++){
                     JFrame f=new JFrame();  
                     int x = Integer.parseInt( JOptionPane.showInputDialog(f,"Coordenada X") );
@@ -109,10 +118,10 @@ public class Cliente {
                     Coordenadas aux = new Coordenadas(x,y);
                     sendPacket(aux);
                     if(!interfaz.boardOponent.comprobarTiro(x, y)){
-                        System.out.println("Tiro fallido");
+                        System.out.println("Tiro fallido D: ");
                         break;
                     }
-                    System.out.println("Tiro acertado");
+                    System.out.println("Tiro acertado!! ");
                 }
                 /*---------------------------*/
                 /*---------------------------*/
@@ -124,10 +133,10 @@ public class Cliente {
                 for(int i = 0;i<3;i++){
                     Coordenadas tiro = (Coordenadas)recivePacket();
                     if(!interfaz.boardShips.comprobarTiro(tiro.x, tiro.y)){
-                        System.out.println("Tiro fallido");
+                        System.out.println("El servidor Falla el tiro");
                         break;
                     }
-                    System.out.println("Tiro acertado");
+                    System.out.println("El servidor acerta el tiro");
                 }
                 /*---------------------------*/
                 /*---------------------------*/
