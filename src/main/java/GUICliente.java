@@ -40,9 +40,11 @@ public class GUICliente extends javax.swing.JFrame {
         setBoards();
     }
     
-    
+    public void setTableroContrincante(int tablero[][]){
+        boardOponent.tablero = tablero;
+    }
     public void setBoards(){
-        boardShips.setMatrix(jPanelOpponent);
+        boardOponent.setMatrix(jPanelOpponent);
         boardShips.setMatrix(jPanelShips);
         setX(jPanelCoordinatesXship);
         setX(jPanelCoordinatesXopponent);
@@ -299,7 +301,19 @@ public class GUICliente extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonPutShipsActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
+            
+        try{
+            Coordenadas inicio = new Coordenadas(boardShips.tablero);
+            cliente.sendPacket(inicio);
+            jButtonPutShips.setEnabled(false);
+            ((JButton)(evt.getSource())).setEnabled(false);
+            Coordenadas c = (Coordenadas)cliente.recivePacket();
+            cliente.Jugar(c.whoInit,c.tablero, this);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         
+            
     }//GEN-LAST:event_jButtonStartActionPerformed
 
     private void jButtonSendCoordinatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendCoordinatesActionPerformed

@@ -18,9 +18,11 @@ public class Servidor {
     private static int max=65535;
     private static String nombreJugador;
     private static int[][] tablero = new int[10][10];
+    private static int[][] tableroContrincante = new int[10][10];
     private static Barco[] barcos = new Barco[7];
     private static int barcosDisponibles;
     private static int orientacion=0;
+    private static boolean turno;
     
     //private static InetAddress dir;
     
@@ -68,6 +70,7 @@ public class Servidor {
         for(int i=0;i<10;i++){
             for(int j=0;j<10;j++){
                 tablero[i][j]=-1;
+                tableroContrincante[i][j]=-1;
             }
         }
         
@@ -168,7 +171,35 @@ public class Servidor {
         }
         return true;
     }
+    public static Object recivePacket() throws Exception{
+        DatagramPacket p = new DatagramPacket(new byte[max],max);
+        cl.receive(p);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(p.getData()));
+        return ois.readObject();
+    }
     
+    public static boolean comprobarTiro(int x,int y){
+        if(tableroContrincante[y][x]>-1){
+            
+            tableroContrincante[y][x] = -2;
+            return true;
+        }else if(tableroContrincante[y][x]>-1){
+            
+            return false;
+        }
+        return false;
+    }
+    public static boolean comprobarTiroEnemigo(int x,int y){
+        if(tablero[y][x]>-1){
+            
+            tablero[y][x] = -2;
+            return true;
+        }else if(tablero[y][x]>-1){
+            
+            return false;
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         try{
@@ -187,16 +218,70 @@ public class Servidor {
                 //if(auxiliar instanceof String)
                 
                 if(auxiliar instanceof Coordenadas){
-                    //Coordenadas coord = (Coordenadas)ois.readObject();
+                    
                     Coordenadas coord = (Coordenadas)auxiliar;
+                    if(coord.isStart){
+                        tableroContrincante = coord.tablero;
+                        coord = new Coordenadas(tablero);
+                        
+                        if(rand(0,1) == 0){
+                            turno = false;
+                            coord.whoInit = false;
+                        }else{
+                            turno = true;
+                            coord.whoInit = true;
+                        }
+                    }
+                    sendPacket(coord);
+                    
+                    while(true){
+                        if(turno){
+                            for(int i = 0;i<3;i++){
+                                Coordenadas tiro = (Coordenadas)recivePacket();
+                                if(!comprobarTiroEnemigo(tiro.x, tiro.y)){
+                                    System.out.println("Suerte tiro fallido");
+                                    break;
+                                }
+                                System.out.println("Le dieron a una nave");
+                            }
+                            /*---------------------------*/
+                            /*---------------------------*/
+                            /*Comprobar si el juego acabo*/
+                            /*---------------------------*/
+                            /*---------------------------*/
+                            turno = false;
+                        }else{
+                            for(int i = 0;i<3;i++){
+                                  
+                                int x = rand(0,9);
+                                int y = rand(0,9);
+                                Coordenadas aux = new Coordenadas(x,y);
+                                sendPacket(aux);
+                                if(!comprobarTiro(x, y)){
+                                    System.out.println("Fallaste el tiro");
+                                    break;
+                                }
+                                System.out.println("Tiro acertado");
+                            }
+                            /*---------------------------*/
+                            /*---------------------------*/
+                            /*Comprobar si el juego acabo*/
+                            /*---------------------------*/
+                            /*---------------------------*/
+                            turno = true;
+                        }
+                    }
+                    //Coordenadas coord = (Coordenadas)ois.readObject();
+                    /*
                     int x = coord.getX();
                     int y = coord.getY();
                     System.out.println("Coordenadas recibidas de cliente: "+p.getAddress()+":"+p.getPort());
                     System.out.println("in serv from cl X:" + x);
                     System.out.println("in serv from cl y:" + y);
-                    sendCoordenadas(p);
+                    sendCoordenadas(p);*/
                     
                 }else if(auxiliar instanceof String){
+                    
                     nombreJugador = (String)auxiliar;
                     auxiliar = null;
                     cl.connect(p.getSocketAddress());
@@ -216,6 +301,7 @@ public class Servidor {
                         }
                         System.out.println();
                     }
+                    
                 }
                 
                 /*cl.receive(p);

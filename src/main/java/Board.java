@@ -11,7 +11,8 @@ public class Board implements  MouseListener{
     
     private Barco[] barcos = new Barco[7];
     
-    private int[][] tablero = new int[10][10];
+    public int[][] tablero = new int[10][10];
+    
     private int barcosDisponibles;
     private int orientacion=0;
     
@@ -32,11 +33,34 @@ public class Board implements  MouseListener{
         for(int i=0; i<10; i++){
             for(int j=0; j<10; j++){
                 tablero[i][j]=-1;
+                
             }
         }
         
     }   //Fin constructor
     
+    public boolean comprobarTiro(int x,int y){
+        if(tablero[y][x]>-1){
+            jArrayButtons[y][x].setBackground(Color.RED);
+            tablero[y][x] = -2;
+            return true;
+        }else if(tablero[y][x]>-1){
+            jArrayButtons[y][x].setBackground(Color.blue);
+            return false;
+        }
+        return false;
+    }
+    public boolean comprobarTiroEnemigo(int x,int y){
+        if(tablero[y][x]>-1){
+            jArrayButtons[y][x].setBackground(Color.WHITE);
+            tablero[y][x] = -2;
+            return true;
+        }else if(tablero[y][x]>-1){
+            
+            return false;
+        }
+        return false;
+    }
     public void setMatrix(JPanel matrix){
         jArrayButtons = new JButton[rows][columns];
         int wButton = matrix.getWidth() / rows;

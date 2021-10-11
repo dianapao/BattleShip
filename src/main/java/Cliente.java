@@ -10,6 +10,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 
 //implements Runnable
@@ -18,6 +20,8 @@ public class Cliente {
     private int pto = 1255;
     private int max = 65535;
     private int x,y;
+    private boolean turno;
+    
     private DatagramPacket peco;
     
     InetAddress dir;
@@ -92,7 +96,49 @@ public class Cliente {
         
         
     }
-    
+    public void Jugar(boolean turnoi,int tablero[][],GUICliente interfaz )throws Exception{
+        this.turno = turnoi;
+        interfaz.boardOponent.tablero=tablero;
+        
+        while(true){
+            if(turno){
+                for(int i = 0;i<3;i++){
+                    JFrame f=new JFrame();  
+                    int x = Integer.parseInt( JOptionPane.showInputDialog(f,"Coordenada X") );
+                    int y = Integer.parseInt( JOptionPane.showInputDialog(f,"Coordenada Y") );
+                    Coordenadas aux = new Coordenadas(x,y);
+                    sendPacket(aux);
+                    if(!interfaz.boardOponent.comprobarTiro(x, y)){
+                        System.out.println("Tiro fallido");
+                        break;
+                    }
+                    System.out.println("Tiro acertado");
+                }
+                /*---------------------------*/
+                /*---------------------------*/
+                /*Comprobar si el juego acabo*/
+                /*---------------------------*/
+                /*---------------------------*/
+                turno = false;
+            }else{
+                for(int i = 0;i<3;i++){
+                    Coordenadas tiro = (Coordenadas)recivePacket();
+                    if(!interfaz.boardShips.comprobarTiro(tiro.x, tiro.y)){
+                        System.out.println("Tiro fallido");
+                        break;
+                    }
+                    System.out.println("Tiro acertado");
+                }
+                /*---------------------------*/
+                /*---------------------------*/
+                /*Comprobar si el juego acabo*/
+                /*---------------------------*/
+                /*---------------------------*/
+                turno = true;
+            }
+        }
+        
+    }
     public void sendServerAdivinaCoordenadas() throws IOException, ClassNotFoundException{
         
         /*try{
