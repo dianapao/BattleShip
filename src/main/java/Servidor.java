@@ -280,6 +280,7 @@ public class Servidor {
                     String ganador ="";
                     boolean fin = false;
                     while(true){
+                        System.out.println("Esperando estado");
                         sendPacket(new Estado(fin,ganador));
                         if(turno){
                             for(int i = 0;i<3;i++){
@@ -345,6 +346,7 @@ public class Servidor {
                             turno = true;
                         }
                     }
+                    sendPacket(new Estado(fin,ganador));
                     //Coordenadas coord = (Coordenadas)ois.readObject();
                     /*
                     int x = coord.getX();
