@@ -277,8 +277,10 @@ public class Servidor {
                         }
                     }
                     sendPacket(coord);
-                    
+                    String ganador ="";
+                    boolean fin = false;
                     while(true){
+                        sendPacket(new Estado(fin,ganador));
                         if(turno){
                             for(int i = 0;i<3;i++){
                                 Coordenadas tiro = (Coordenadas)recivePacket();
@@ -292,6 +294,9 @@ public class Servidor {
                             if(endGame()){
                                 System.out.println("!!!!!!!!!!!EL SERVIDOR HA PERDIDO!!!!!!!!!");
                                 System.out.println("!!!!!!!!!!!EL CLIENTE HA GANADOOO :D !!!!!");
+                                ganador = "Jugador";
+                                fin = true;
+                                break;
                             }
                             
                             turno = false;
@@ -332,6 +337,9 @@ public class Servidor {
                             if(endGameClient()){
                                 System.out.println("!!!!!!!!!!EL CLIENTE HA PEDIDO!!!!!!!!!!");
                                 System.out.println("!!!!!!!!!!EL SERVIDOR HA GANADO :DD !!!!");
+                                ganador = "Jugador";
+                                fin = true;
+                                break;
                             }
                             
                             turno = true;

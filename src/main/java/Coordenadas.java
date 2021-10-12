@@ -10,6 +10,7 @@ public class Coordenadas implements Serializable{
     public List<Coordenadas> listCoordShips = new ArrayList<>();
     public boolean whoInit = false; // Si es el inicio del juego envia quien empieza el juego;
                                     //false = servidor; true= cliente
+    
     public Coordenadas(int tablero[][]){
         this.tablero = tablero;
         isStart=true;
@@ -18,7 +19,7 @@ public class Coordenadas implements Serializable{
         this.x = x;
         this.y = y;
     }
-    
+  
     public Coordenadas(int tablero[][], List listCoord){
         this.tablero = tablero;
         this.listCoordShips = listCoord;

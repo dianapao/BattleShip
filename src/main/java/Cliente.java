@@ -106,6 +106,12 @@ public class Cliente {
         listCoordClient = interfaz.boardShips.getlistCoordClient();
         
         while(true){
+            Estado e = (Estado)recivePacket();
+            if(e.isEnd == true){
+                JFrame f=new JFrame();
+                JOptionPane.showMessageDialog(f, "Juego Finalizado\n Ganador: "+e.ganador);
+                break;
+            }
             if(turno){
                 /*System.out.println("Coordenadas utilizadas en cl");
                     for(Coordenadas current: listCoordClient){

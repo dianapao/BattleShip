@@ -48,7 +48,7 @@ public class Board implements  MouseListener{
             tablero[y][x] = -2;
             return true;
         }else if(tablero[y][x] == -1){
-            jArrayButtons[y][x].setBackground(Color.RED);
+            jArrayButtons[y][x].setBackground(Color.WHITE);
             return false;
         }
         return false;
